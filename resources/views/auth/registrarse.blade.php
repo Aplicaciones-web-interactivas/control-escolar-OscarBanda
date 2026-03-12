@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Registro</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -17,31 +17,29 @@
             </div>
         @endif
 
-        @if (session('error'))
-            <div class="bg-red-500 text-white p-3 mb-3 rounded text-center">
-                {{ session('error') }}
-            </div>
-        @endif
-
-        <form method="POST" action="/login" class="bg-white p-6 rounded shadow">
+        <form method="POST" action="/register" class="bg-white p-6 rounded shadow">
 
             @csrf
 
-            <h2 class="text-xl mb-4 text-center">Iniciar sesión</h2>
+            <h2 class="text-xl mb-4 text-center">Crear cuenta</h2>
+
+            <input type="text" name="nombre" placeholder="Nombre" class="w-full border p-2 mb-3" required>
 
             <input type="text" name="clave_institucional" placeholder="Clave institucional"
                 class="w-full border p-2 mb-3" required>
 
             <input type="password" name="password" placeholder="Contraseña" class="w-full border p-2 mb-3" required>
 
-            <button class="bg-blue-500 text-white w-full p-2 rounded">
-                Entrar
+            <button class="bg-green-500 text-white w-full p-2 rounded">
+                Registrarse
             </button>
 
             <div class="text-center mt-4">
-                <a href="/register" class="text-blue-500 hover:underline text-sm">
-                    ¿No tienes cuenta? Registrarse
+
+                <a href="/login" class="text-blue-500 hover:underline text-sm">
+                    Volver al login
                 </a>
+
             </div>
 
         </form>
