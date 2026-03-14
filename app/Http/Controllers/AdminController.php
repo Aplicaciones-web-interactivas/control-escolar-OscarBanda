@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Materia;
 use App\Models\Horario;
 use App\Models\User;
+use App\Models\Grupo;
 
 class AdminController extends Controller
 {
@@ -131,5 +132,60 @@ class AdminController extends Controller
         $maestros = User::all();
 
         return view('admin.editarHorario', compact('horario', 'materias', 'maestros'));
+    }
+
+    public function indexGrupos()
+    {
+        $grupos = Grupo::with('horario.materia', 'horario.maestro')->get();
+        $horarios = Horario::with('materia', 'maestro')->get();
+
+        return view('admin.grupos', compact('grupos', 'horarios'));
+    }
+
+    public function saveGrupo(Request $request)
+    {
+        $request->validate([
+            'nombre' => 'required',
+            'horario_id' => 'required'
+        ]);
+
+        Grupo::create([
+            'nombre' => $request->nombre,
+            'horario_id' => $request->horario_id
+        ]);
+
+        return redirect()->route('admin.grupos');
+    }
+
+    public function editGrupo($id)
+    {
+        $grupo = Grupo::findOrFail($id);
+        $horarios = Horario::with('materia', 'maestro')->get();
+
+        return view('admin.editarGrupo', compact('grupo', 'horarios'));
+    }
+
+    public function updateGrupo(Request $request, $id)
+    {
+        $request->validate([
+            'nombre' => 'required',
+            'horario_id' => 'required'
+        ]);
+
+        $grupo = Grupo::findOrFail($id);
+
+        $grupo->update([
+            'nombre' => $request->nombre,
+            'horario_id' => $request->horario_id
+        ]);
+
+        return redirect()->route('admin.grupos');
+    }
+
+    public function deleteGrupo($id)
+    {
+        Grupo::findOrFail($id)->delete();
+
+        return redirect()->route('admin.grupos');
     }
 }

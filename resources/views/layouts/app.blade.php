@@ -32,7 +32,7 @@
                     Horarios
                 </a>
 
-                <a href="#" class="hover:underline">
+                <a href="{{ route('admin.grupos') }}" class="hover:underline">
                     Grupos
                 </a>
 
