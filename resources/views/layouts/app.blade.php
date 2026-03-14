@@ -15,7 +15,6 @@
 
         <div class="max-w-6xl mx-auto flex justify-between items-center p-4">
 
-            <!-- Logo / titulo -->
             <div class="font-bold text-lg">
                 <a href="/dashboard" class="cursor-pointer">
                     Sistema Escolar
@@ -29,7 +28,7 @@
                     Materias
                 </a>
 
-                <a href="#" class="hover:underline">
+                <a href="{{  route('admin.horarios') }}" class="hover:underline">
                     Horarios
                 </a>
 
