@@ -39,3 +39,13 @@ Route::put('/horarios/{id}', [AdminController::class, 'updateHorario'])->name('a
 Route::delete('/horarios/{id}', [AdminController::class, 'deleteHorario'])->name('admin.horarios.delete');
 
 Route::get('/horarios/{id}/edit', [AdminController::class, 'editHorario'])->name('admin.horarios.edit');
+
+Route::get('/grupos', [AdminController::class,'indexGrupos'])->name('admin.grupos');
+
+Route::post('/grupos', [AdminController::class,'saveGrupo'])->name('admin.grupos.save');
+
+Route::get('/grupos/{id}/edit', [AdminController::class,'editGrupo'])->name('admin.grupos.edit');
+
+Route::put('/grupos/{id}', [AdminController::class,'updateGrupo'])->name('admin.grupos.update');
+
+Route::delete('/grupos/{id}', [AdminController::class,'deleteGrupo'])->name('admin.grupos.delete');

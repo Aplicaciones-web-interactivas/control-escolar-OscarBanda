@@ -23,4 +23,9 @@ class Horario extends Model
     {
         return $this->belongsTo(User::class, 'maestro_id');
     }
+
+    public function grupos()
+    {
+        return $this->hasMany(Grupo::class);
+    }
 }
