@@ -59,3 +59,13 @@ Route::delete('/inscripciones/{id}', [AdminController::class, 'deleteInscripcion
 Route::get('/inscripciones/{id}/edit', [AdminController::class,'editInscripcion'])->name('admin.inscripciones.edit');
 
 Route::put('/inscripciones/{id}', [AdminController::class,'updateInscripcion'])->name('admin.inscripciones.update');
+
+Route::get('/calificaciones', [AdminController::class,'indexCalificaciones'])
+->name('admin.calificaciones');
+
+Route::post('/calificaciones', [AdminController::class,'saveCalificacion'])
+->name('admin.calificaciones.save');
+
+Route::put('/calificaciones/{id}', [AdminController::class, 'updateCalificacion'])->name('admin.calificaciones.update');
+
+Route::delete('/calificaciones/{id}', [AdminController::class, 'deleteCalificacion'])->name('admin.calificaciones.delete');
