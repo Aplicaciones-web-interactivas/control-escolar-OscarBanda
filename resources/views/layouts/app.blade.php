@@ -40,7 +40,7 @@
                     Inscripciones
                 </a>
 
-                <a href="#" class="hover:underline">
+                <a href="{{ route('admin.calificaciones') }}" class="hover:underline">
                     Calificaciones
                 </a>
 

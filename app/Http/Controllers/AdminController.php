@@ -8,6 +8,7 @@ use App\Models\Horario;
 use App\Models\User;
 use App\Models\Grupo;
 use App\Models\Inscripcion;
+use App\Models\Calificacion;
 
 class AdminController extends Controller
 {
@@ -191,56 +192,119 @@ class AdminController extends Controller
     }
 
     public function indexInscripciones()
-{
-    $inscripciones = Inscripcion::with(['user', 'grupo'])->get();
-    $usuarios = User::all();
-    $grupos = Grupo::all();
+    {
+        $inscripciones = Inscripcion::with(['user', 'grupo'])->get();
+        $usuarios = User::all();
+        $grupos = Grupo::all();
 
-    return view('admin.inscripciones', compact('inscripciones', 'usuarios', 'grupos'));
-}
+        return view('admin.inscripciones', compact('inscripciones', 'usuarios', 'grupos'));
+    }
 
-public function saveInscripcion(Request $request)
-{
-    $request->validate([
-        'user_id' => 'required',
-        'grupo_id' => 'required'
-    ]);
+    public function saveInscripcion(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required',
+            'grupo_id' => 'required'
+        ]);
 
-    Inscripcion::create($request->all());
+        Inscripcion::create($request->all());
 
-    return redirect()->route('admin.inscripciones');
-}
+        return redirect()->route('admin.inscripciones');
+    }
 
-public function deleteInscripcion($id)
-{
-    Inscripcion::findOrFail($id)->delete();
+    public function deleteInscripcion($id)
+    {
+        Inscripcion::findOrFail($id)->delete();
 
-    return redirect()->route('admin.inscripciones');
-}
+        return redirect()->route('admin.inscripciones');
+    }
 
-public function editInscripcion($id)
-{
-    $inscripcion = Inscripcion::findOrFail($id);
-    $usuarios = User::all();
-    $grupos = Grupo::all();
+    public function editInscripcion($id)
+    {
+        $inscripcion = Inscripcion::findOrFail($id);
+        $usuarios = User::all();
+        $grupos = Grupo::all();
 
-    return view('admin.editarInscripcion', compact('inscripcion','usuarios','grupos'));
-}
+        return view('admin.editarInscripcion', compact('inscripcion', 'usuarios', 'grupos'));
+    }
 
-public function updateInscripcion(Request $request, $id)
-{
-    $request->validate([
-        'user_id' => 'required',
-        'grupo_id' => 'required'
-    ]);
+    public function updateInscripcion(Request $request, $id)
+    {
+        $request->validate([
+            'user_id' => 'required',
+            'grupo_id' => 'required'
+        ]);
 
-    $inscripcion = Inscripcion::findOrFail($id);
+        $inscripcion = Inscripcion::findOrFail($id);
 
-    $inscripcion->update([
-        'user_id' => $request->user_id,
-        'grupo_id' => $request->grupo_id
-    ]);
+        $inscripcion->update([
+            'user_id' => $request->user_id,
+            'grupo_id' => $request->grupo_id
+        ]);
 
-    return redirect()->route('admin.inscripciones');
-}
+        return redirect()->route('admin.inscripciones');
+    }
+
+    public function indexCalificaciones(Request $request)
+    {
+        $grupos = Grupo::all();
+
+        if ($request->grupo_id) {
+
+            $inscripciones = Inscripcion::with('user','grupo')
+                ->where('grupo_id', $request->grupo_id)
+                ->get();
+
+            $calificaciones = Calificacion::where('grupo_id', $request->grupo_id)
+                ->get()
+                ->keyBy('user_id');
+
+            return view('admin.calificaciones', compact('grupos','inscripciones','calificaciones'));
+        }
+
+        return view('admin.calificaciones', compact('grupos'));
+    }
+
+    public function saveCalificacion(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required',
+            'grupo_id' => 'required',
+            'calificacion' => 'required|numeric|min:1|max:10'
+        ]);
+
+        Calificacion::updateOrCreate(
+            [
+                'user_id' => $request->user_id,
+                'grupo_id' => $request->grupo_id
+            ],
+            [
+                'calificacion' => $request->calificacion
+            ]
+        );
+
+        return back();
+    }
+
+    public function updateCalificacion(Request $request, $id)
+    {
+        $request->validate([
+            'calificacion' => 'required|numeric|min:0|max:10'
+        ]);
+
+        $calificacion = Calificacion::findOrFail($id);
+
+        $calificacion->update([
+            'calificacion' => $request->calificacion
+        ]);
+
+        return redirect()->route('admin.calificaciones');
+    }
+
+    public function deleteCalificacion($id)
+    {
+        Calificacion::findOrFail($id)->delete();
+
+        return redirect()->route('admin.calificaciones');
+    }
 }
