@@ -49,3 +49,13 @@ Route::get('/grupos/{id}/edit', [AdminController::class,'editGrupo'])->name('adm
 Route::put('/grupos/{id}', [AdminController::class,'updateGrupo'])->name('admin.grupos.update');
 
 Route::delete('/grupos/{id}', [AdminController::class,'deleteGrupo'])->name('admin.grupos.delete');
+
+Route::get('/inscripciones', [AdminController::class, 'indexInscripciones'])->name('admin.inscripciones');
+
+Route::post('/inscripciones', [AdminController::class, 'saveInscripcion'])->name('admin.inscripciones.save');
+
+Route::delete('/inscripciones/{id}', [AdminController::class, 'deleteInscripcion'])->name('admin.inscripciones.delete');
+
+Route::get('/inscripciones/{id}/edit', [AdminController::class,'editInscripcion'])->name('admin.inscripciones.edit');
+
+Route::put('/inscripciones/{id}', [AdminController::class,'updateInscripcion'])->name('admin.inscripciones.update');

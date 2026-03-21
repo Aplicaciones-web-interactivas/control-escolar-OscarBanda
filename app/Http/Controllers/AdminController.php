@@ -7,6 +7,7 @@ use App\Models\Materia;
 use App\Models\Horario;
 use App\Models\User;
 use App\Models\Grupo;
+use App\Models\Inscripcion;
 
 class AdminController extends Controller
 {
@@ -188,4 +189,58 @@ class AdminController extends Controller
 
         return redirect()->route('admin.grupos');
     }
+
+    public function indexInscripciones()
+{
+    $inscripciones = Inscripcion::with(['user', 'grupo'])->get();
+    $usuarios = User::all();
+    $grupos = Grupo::all();
+
+    return view('admin.inscripciones', compact('inscripciones', 'usuarios', 'grupos'));
+}
+
+public function saveInscripcion(Request $request)
+{
+    $request->validate([
+        'user_id' => 'required',
+        'grupo_id' => 'required'
+    ]);
+
+    Inscripcion::create($request->all());
+
+    return redirect()->route('admin.inscripciones');
+}
+
+public function deleteInscripcion($id)
+{
+    Inscripcion::findOrFail($id)->delete();
+
+    return redirect()->route('admin.inscripciones');
+}
+
+public function editInscripcion($id)
+{
+    $inscripcion = Inscripcion::findOrFail($id);
+    $usuarios = User::all();
+    $grupos = Grupo::all();
+
+    return view('admin.editarInscripcion', compact('inscripcion','usuarios','grupos'));
+}
+
+public function updateInscripcion(Request $request, $id)
+{
+    $request->validate([
+        'user_id' => 'required',
+        'grupo_id' => 'required'
+    ]);
+
+    $inscripcion = Inscripcion::findOrFail($id);
+
+    $inscripcion->update([
+        'user_id' => $request->user_id,
+        'grupo_id' => $request->grupo_id
+    ]);
+
+    return redirect()->route('admin.inscripciones');
+}
 }
