@@ -36,7 +36,7 @@
                     Grupos
                 </a>
 
-                <a href="#" class="hover:underline">
+                <a href="{{ route('admin.inscripciones') }}" class="hover:underline">
                     Inscripciones
                 </a>
 
