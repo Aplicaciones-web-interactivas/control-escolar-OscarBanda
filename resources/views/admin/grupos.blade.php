@@ -18,79 +18,81 @@
 
 
         <!-- FORMULARIO -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        @if(Auth::user()->role == 'Administrador')
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
 
-            <h2 class="text-lg font-semibold text-gray-700 mb-6">
-                Agregar nuevo grupo
-            </h2>
+                <h2 class="text-lg font-semibold text-gray-700 mb-6">
+                    Agregar nuevo grupo
+                </h2>
 
-            <form action="{{ route('admin.grupos.save') }}" method="POST" class="space-y-6">
+                <form action="{{ route('admin.grupos.save') }}" method="POST" class="space-y-6">
 
-                @csrf
-
-
-                <!-- NOMBRE -->
-
-                <div>
-
-                    <label class="block text-sm font-medium text-gray-600 mb-1">
-                        Nombre del grupo
-                    </label>
-
-                    <input type="text" name="nombre" required placeholder="Ej. Grupo A"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2
-                    focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-
-                </div>
+                    @csrf
 
 
-                <!-- HORARIO -->
+                    <!-- NOMBRE -->
 
-                <div>
+                    <div>
 
-                    <label class="block text-sm font-medium text-gray-600 mb-1">
-                        Horario
-                    </label>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">
+                            Nombre del grupo
+                        </label>
 
-                    <select name="horario_id"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2
-                    focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <input type="text" name="nombre" required placeholder="Ej. Grupo A"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
-                        @foreach ($horarios as $horario)
-                            <option value="{{ $horario->id }}">
-
-                                {{ $horario->materia->nombre }}
-                                -
-                                {{ $horario->maestro->nombre }}
-                                -
-                                {{ $horario->dia }}
-                                {{ $horario->hora_inicio }}
-
-                            </option>
-                        @endforeach
-
-                    </select>
-
-                </div>
+                    </div>
 
 
-                <!-- BOTON -->
+                    <!-- HORARIO -->
 
-                <div class="flex justify-end pt-4 border-t border-gray-200">
+                    <div>
 
-                    <button
-                        class="bg-blue-600 text-white px-4 py-2 rounded-lg
-                hover:bg-blue-700 transition">
+                        <label class="block text-sm font-medium text-gray-600 mb-1">
+                            Horario
+                        </label>
 
-                        Agregar grupo
+                        <select name="horario_id"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
-                    </button>
+                            @foreach ($horarios as $horario)
+                                <option value="{{ $horario->id }}">
 
-                </div>
+                                    {{ $horario->materia->nombre }}
+                                    -
+                                    {{ $horario->maestro->nombre }}
+                                    -
+                                    {{ $horario->dia }}
+                                    {{ $horario->hora_inicio }}
 
-            </form>
+                                </option>
+                            @endforeach
 
-        </div>
+                        </select>
+
+                    </div>
+
+
+                    <!-- BOTON -->
+
+                    <div class="flex justify-end pt-4 border-t border-gray-200">
+
+                        <button
+                            class="bg-blue-600 text-white px-4 py-2 rounded-lg
+                    hover:bg-blue-700 transition">
+
+                            Agregar grupo
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        @endif
 
 
 
@@ -118,7 +120,9 @@
                             <th class="px-6 py-3 text-left">Materia</th>
                             <th class="px-6 py-3 text-left">Profesor</th>
                             <th class="px-6 py-3 text-left">Horario</th>
-                            <th class="px-6 py-3 text-center">Acciones</th>
+                            @if(Auth::user()->role == 'Administrador')
+                                <th class="px-6 py-3 text-center">Acciones</th>
+                            @endif
 
                         </tr>
 
@@ -147,29 +151,29 @@
                                 </td>
 
                                 <td class="px-6 py-4">
+                                    @if(Auth::user()->role == 'Administrador')
+                                        <div class="flex justify-center gap-3">
 
-                                    <div class="flex justify-center gap-3">
+                                            <a href="{{ route('admin.grupos.edit', $grupo->id) }}"
+                                                class="bg-yellow-400 text-white px-3 py-1.5 rounded-md text-sm hover:bg-yellow-500">
 
-                                        <a href="{{ route('admin.grupos.edit', $grupo->id) }}"
-                                            class="bg-yellow-400 text-white px-3 py-1.5 rounded-md text-sm hover:bg-yellow-500">
+                                                Editar
 
-                                            Editar
+                                            </a>
 
-                                        </a>
+                                            <button
+                                                onclick="abrirModalEliminar(
+                                                    '{{ route('admin.grupos.delete', $grupo->id) }}',
+                                                    'el grupo {{ $grupo->nombre }}'
+                                                )"
+                                                class="bg-red-500 text-white px-3 py-1.5 rounded-md text-sm hover:bg-red-600 transition">
 
-                                        <button
-                                            onclick="abrirModalEliminar(
-                                                '{{ route('admin.grupos.delete', $grupo->id) }}',
-                                                'el grupo {{ $grupo->nombre }}'
-                                            )"
-                                            class="bg-red-500 text-white px-3 py-1.5 rounded-md text-sm hover:bg-red-600 transition">
+                                                Eliminar
 
-                                            Eliminar
+                                            </button>
 
-                                        </button>
-
-                                    </div>
-
+                                        </div>
+                                    @endif
                                 </td>
 
                             </tr>

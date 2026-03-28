@@ -19,82 +19,82 @@
 
 
         <!-- FORMULARIO -->
+        @if(Auth::user()->role != 'Estudiante')
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
 
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-6">
+                    Nueva inscripción
+                </h2>
 
-            <h2 class="text-lg font-semibold text-gray-700 mb-6">
-                Nueva inscripción
-            </h2>
+                <form action="{{ route('admin.inscripciones.save') }}" method="POST" class="grid md:grid-cols-3 gap-6">
 
-            <form action="{{ route('admin.inscripciones.save') }}" method="POST" class="grid md:grid-cols-3 gap-6">
-
-                @csrf
-
-
-                <!-- ALUMNO -->
-
-                <div>
-
-                    <label class="block text-sm font-medium text-gray-600 mb-1">
-                        Alumno
-                    </label>
-
-                    <select name="user_id"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2
-                    focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-
-                        @foreach ($usuarios as $user)
-                            <option value="{{ $user->id }}">
-                                {{ $user->nombre }}
-                            </option>
-                        @endforeach
-
-                    </select>
-
-                </div>
+                    @csrf
 
 
-                <!-- GRUPO -->
+                    <!-- ALUMNO -->
 
-                <div>
+                    <div>
 
-                    <label class="block text-sm font-medium text-gray-600 mb-1">
-                        Grupo
-                    </label>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">
+                            Alumno
+                        </label>
 
-                    <select name="grupo_id"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2
-                    focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <select name="user_id"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
-                        @foreach ($grupos as $grupo)
-                            <option value="{{ $grupo->id }}">
-                                {{ $grupo->nombre }}
-                            </option>
-                        @endforeach
+                            @foreach ($usuarios as $user)
+                                <option value="{{ $user->id }}">
+                                    {{ $user->nombre }}
+                                </option>
+                            @endforeach
 
-                    </select>
+                        </select>
 
-                </div>
+                    </div>
 
 
-                <!-- BOTON -->
+                    <!-- GRUPO -->
 
-                <div class="flex items-end">
+                    <div>
 
-                    <button
-                        class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg
-                hover:bg-blue-700 transition">
+                        <label class="block text-sm font-medium text-gray-600 mb-1">
+                            Grupo
+                        </label>
 
-                        Inscribir alumno
+                        <select name="grupo_id"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
-                    </button>
+                            @foreach ($grupos as $grupo)
+                                <option value="{{ $grupo->id }}">
+                                    {{ $grupo->nombre }}
+                                </option>
+                            @endforeach
 
-                </div>
+                        </select>
 
-            </form>
+                    </div>
 
-        </div>
 
+                    <!-- BOTON -->
+
+                    <div class="flex items-end">
+
+                        <button
+                            class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg
+                    hover:bg-blue-700 transition">
+
+                            Inscribir alumno
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        @endif
 
 
         <!-- TABLA -->
@@ -125,9 +125,15 @@
                                 Grupo
                             </th>
 
-                            <th class="px-6 py-3 text-center">
-                                Acciones
+                            <th class="px-6 py-3 text-left">
+                                Materia
                             </th>
+
+                            @if(Auth::user()->role != 'Estudiante')
+                                <th class="px-6 py-3 text-center">
+                                    Acciones
+                                </th>
+                            @endif
 
                         </tr>
 
@@ -146,30 +152,34 @@
                                     {{ $inscripcion->grupo->nombre }}
                                 </td>
 
+                                <td class="px-6 py-4 text-gray-700">
+                                    {{ $inscripcion->grupo->horario->materia->nombre }}
+                                </td>
+
                                 <td class="px-6 py-4">
+                                    @if(Auth::user()->role != 'Estudiante')
+                                        <div class="flex justify-center gap-3">
 
-                                    <div class="flex justify-center gap-3">
+                                            <a href="{{ route('admin.inscripciones.edit', $inscripcion->id) }}"
+                                                class="bg-yellow-400 text-white px-3 py-1.5 rounded-md text-sm hover:bg-yellow-500">
 
-                                        <a href="{{ route('admin.inscripciones.edit', $inscripcion->id) }}"
-                                            class="bg-yellow-400 text-white px-3 py-1.5 rounded-md text-sm hover:bg-yellow-500">
+                                                Editar
 
-                                            Editar
+                                            </a>
 
-                                        </a>
+                                            <button
+                                                onclick="abrirModalEliminar(
+                                                    '{{ route('admin.inscripciones.delete', $inscripcion->id) }}',
+                                                    'la inscripción de {{ $inscripcion->user->nombre }}'
+                                                )"
+                                                class="bg-red-500 text-white px-3 py-1.5 rounded-md text-sm hover:bg-red-600 transition">
 
-                                        <button
-                                            onclick="abrirModalEliminar(
-                                                '{{ route('admin.inscripciones.delete', $inscripcion->id) }}',
-                                                'la inscripción de {{ $inscripcion->user->nombre }}'
-                                            )"
-                                            class="bg-red-500 text-white px-3 py-1.5 rounded-md text-sm hover:bg-red-600 transition">
+                                                Eliminar
 
-                                            Eliminar
+                                            </button>
 
-                                        </button>
-
-                                    </div>
-
+                                        </div>
+                                    @endif
                                 </td>
 
                             </tr>
