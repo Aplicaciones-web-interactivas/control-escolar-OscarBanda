@@ -15,7 +15,7 @@ class AdminController extends Controller
 
     public function indexMaterias()
     {
-        $materias = Materia::all();
+        $materias = Materia::paginate(10);
 
         return view('admin.materias', compact('materias'));
     }
@@ -63,9 +63,9 @@ class AdminController extends Controller
 
     public function indexHorarios()
     {
-        $horarios = Horario::with(['materia', 'maestro'])->get();
+        $horarios = Horario::with(['materia', 'maestro'])->paginate(10);
         $materias = Materia::all();
-        $maestros = User::all();
+        $maestros = User::where('role', 'Profesor')->get();
 
         return view('admin.horarios', compact('horarios', 'materias', 'maestros'));
     }
@@ -131,14 +131,14 @@ class AdminController extends Controller
     {
         $horario = Horario::findOrFail($id);
         $materias = Materia::all();
-        $maestros = User::all();
+        $maestros = User::where('role', 'Profesor')->get();
 
         return view('admin.editarHorario', compact('horario', 'materias', 'maestros'));
     }
 
     public function indexGrupos()
     {
-        $grupos = Grupo::with('horario.materia', 'horario.maestro')->get();
+        $grupos = Grupo::with('horario.materia', 'horario.maestro')->paginate(10);
         $horarios = Horario::with('materia', 'maestro')->get();
 
         return view('admin.grupos', compact('grupos', 'horarios'));
@@ -193,8 +193,8 @@ class AdminController extends Controller
 
     public function indexInscripciones()
     {
-        $inscripciones = Inscripcion::with(['user', 'grupo'])->get();
-        $usuarios = User::all();
+        $inscripciones = Inscripcion::with(['user', 'grupo'])->paginate(10);
+        $usuarios = User::where('role', 'Estudiante')->get();
         $grupos = Grupo::all();
 
         return view('admin.inscripciones', compact('inscripciones', 'usuarios', 'grupos'));
@@ -222,7 +222,7 @@ class AdminController extends Controller
     public function editInscripcion($id)
     {
         $inscripcion = Inscripcion::findOrFail($id);
-        $usuarios = User::all();
+        $usuarios = User::where('role', 'Estudiante')->get();
         $grupos = Grupo::all();
 
         return view('admin.editarInscripcion', compact('inscripcion', 'usuarios', 'grupos'));
@@ -253,7 +253,7 @@ class AdminController extends Controller
 
             $inscripciones = Inscripcion::with('user','grupo')
                 ->where('grupo_id', $request->grupo_id)
-                ->get();
+                ->paginate(10);
 
             $calificaciones = Calificacion::where('grupo_id', $request->grupo_id)
                 ->get()

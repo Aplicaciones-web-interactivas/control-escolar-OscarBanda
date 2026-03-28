@@ -1,32 +1,42 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="max-w-6xl mx-auto">
+    <div class="space-y-8">
 
-        <h1 class="text-3xl font-bold mb-6">
-            Gestión de Horarios
-        </h1>
+        <!-- TITULO -->
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">
+                Gestión de Horarios
+            </h1>
+            <p class="text-gray-500 text-sm mt-1">
+                Administra los horarios de las materias y profesores
+            </p>
+        </div>
+
 
         <!-- FORMULARIO -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
 
-        <div class="bg-white p-6 rounded shadow mb-8">
-
-            <h2 class="text-xl mb-4">Agregar horario</h2>
+            <h2 class="text-lg font-semibold text-gray-700 mb-6">
+                Agregar nuevo horario
+            </h2>
 
             <form action="{{ route('admin.horarios.save') }}" method="POST" class="space-y-6">
 
                 @csrf
 
-                <!-- MATERIA Y MAESTRO -->
 
-                <div class="grid grid-cols-2 gap-4">
+                <!-- MATERIA Y MAESTRO -->
+                <div class="grid md:grid-cols-2 gap-6">
 
                     <div>
-                        <label class="block text-sm font-semibold mb-1">
+                        <label class="block text-sm font-medium text-gray-600 mb-1">
                             Materia
                         </label>
 
-                        <select name="materia_id" required class="border p-2 rounded w-full">
+                        <select name="materia_id"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
                             @foreach ($materias as $materia)
                                 <option value="{{ $materia->id }}">
@@ -39,11 +49,13 @@
 
 
                     <div>
-                        <label class="block text-sm font-semibold mb-1">
-                            Maestro
+                        <label class="block text-sm font-medium text-gray-600 mb-1">
+                            Profesor
                         </label>
 
-                        <select name="maestro_id" required class="border p-2 rounded w-full">
+                        <select name="maestro_id"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
                             @foreach ($maestros as $maestro)
                                 <option value="{{ $maestro->id }}">
@@ -58,24 +70,28 @@
 
 
                 <!-- DIAS -->
-
                 <div>
 
-                    <label class="block text-sm font-semibold mb-2">
+                    <label class="block text-sm font-medium text-gray-600 mb-2">
                         Días de la semana
                     </label>
 
-                    <div class="grid grid-cols-4 gap-2">
+                    @php
+                        $dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                    @endphp
 
-                        @php
-                            $dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-                        @endphp
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
 
                         @foreach ($dias as $dia)
-                            <label class="flex items-center gap-2 border rounded p-2 hover:bg-gray-100">
+                            <label
+                                class="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2
+                                   hover:bg-gray-50 cursor-pointer">
 
-                                <input type="checkbox" name="dias[]" value="{{ $dia }}">
-                                {{ $dia }}
+                                <input type="checkbox" name="dias[]" value="{{ $dia }}" class="accent-blue-600">
+
+                                <span class="text-sm text-gray-700">
+                                    {{ $dia }}
+                                </span>
 
                             </label>
                         @endforeach
@@ -86,34 +102,38 @@
 
 
                 <!-- HORAS -->
-
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid md:grid-cols-2 gap-6">
 
                     <div>
-                        <label class="block text-sm font-semibold mb-1">
-                            Hora inicio
+                        <label class="block text-sm font-medium text-gray-600 mb-1">
+                            Hora de inicio
                         </label>
 
-                        <input type="time" name="hora_inicio" required class="border p-2 rounded w-full">
+                        <input type="time" name="hora_inicio" required
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     </div>
 
 
                     <div>
-                        <label class="block text-sm font-semibold mb-1">
-                            Hora fin
+                        <label class="block text-sm font-medium text-gray-600 mb-1">
+                            Hora de fin
                         </label>
 
-                        <input type="time" name="hora_fin" required class="border p-2 rounded w-full">
+                        <input type="time" name="hora_fin" required
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     </div>
 
                 </div>
 
 
                 <!-- BOTON -->
+                <div class="flex justify-end pt-4 border-t border-gray-200">
 
-                <div class="flex justify-end">
-
-                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                    <button
+                        class="bg-blue-600 text-white px-4 py-2 rounded-lg
+                hover:bg-blue-700 transition">
 
                         Agregar horario
 
@@ -125,78 +145,116 @@
 
         </div>
 
+
+
         <!-- TABLA -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
 
-        <div class="bg-white rounded shadow overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
 
-            <table class="w-full">
+                <h2 class="text-lg font-semibold text-gray-700">
+                    Horarios registrados
+                </h2>
 
-                <thead class="bg-gray-100">
+            </div>
 
-                    <tr>
+            <div class="overflow-x-auto">
 
-                        <th class="p-3">Materia</th>
-                        <th class="p-3">Maestro</th>
-                        <th class="p-3">Día</th>
-                        <th class="p-3">Inicio</th>
-                        <th class="p-3">Fin</th>
-                        <th class="p-3">Acciones</th>
+                <table class="w-full text-sm">
 
-                    </tr>
+                    <thead class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider">
 
-                </thead>
+                        <tr>
 
-                <tbody>
-
-                    @foreach ($horarios as $horario)
-                        <tr class="border-t">
-
-                            <td class="p-3">
-                                {{ $horario->materia->nombre }}
-                            </td>
-
-                            <td class="p-3">
-                                {{ $horario->maestro->nombre }}
-                            </td>
-
-                            <td class="p-3">
-                                {{ $horario->dia }}
-                            </td>
-
-                            <td class="p-3">
-                                {{ $horario->hora_inicio }}
-                            </td>
-
-                            <td class="p-3">
-                                {{ $horario->hora_fin }}
-                            </td>
-
-                            <td class="p-3 flex gap-2">
-
-                                <a href="{{ route('admin.horarios.edit', $horario->id) }}"
-                                    class="bg-yellow-500 text-white px-3 py-1 rounded">
-                                    Editar
-                                </a>
-
-                                <form action="{{ route('admin.horarios.delete', $horario->id) }}" method="POST">
-
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button class="bg-red-500 text-white px-3 py-1 rounded">
-                                        Eliminar
-                                    </button>
-
-                                </form>
-
-                            </td>
+                            <th class="px-6 py-3 text-left">Materia</th>
+                            <th class="px-6 py-3 text-left">Profesor</th>
+                            <th class="px-6 py-3 text-left">Día</th>
+                            <th class="px-6 py-3 text-left">Inicio</th>
+                            <th class="px-6 py-3 text-left">Fin</th>
+                            <th class="px-6 py-3 text-center">Acciones</th>
 
                         </tr>
-                    @endforeach
 
-                </tbody>
+                    </thead>
 
-            </table>
+                    <tbody class="divide-y divide-gray-200">
+
+                        @foreach ($horarios as $horario)
+                            <tr class="hover:bg-gray-50 transition">
+
+                                <td class="px-6 py-4 font-medium text-gray-800">
+                                    {{ $horario->materia->nombre }}
+                                </td>
+
+                                <td class="px-6 py-4 text-gray-700">
+                                    {{ $horario->maestro->nombre }}
+                                </td>
+
+                                <td class="px-6 py-4 text-gray-600">
+                                    {{ $horario->dia }}
+                                </td>
+
+                                <td class="px-6 py-4 text-gray-600">
+                                    {{ $horario->hora_inicio }}
+                                </td>
+
+                                <td class="px-6 py-4 text-gray-600">
+                                    {{ $horario->hora_fin }}
+                                </td>
+
+                                <td class="px-6 py-4">
+
+                                    <div class="flex justify-center gap-3">
+
+                                        <a href="{{ route('admin.horarios.edit', $horario->id) }}"
+                                            class="bg-yellow-400 text-white px-3 py-1.5 rounded-md text-sm hover:bg-yellow-500">
+
+                                            Editar
+
+                                        </a>
+
+                                        <button
+                                            onclick="abrirModalEliminar(
+                                                '{{ route('admin.horarios.delete', $horario->id) }}',
+                                                'el horario {{ $horario->dia }} {{ $horario->hora_inicio }}'
+                                            )"
+                                            class="bg-red-500 text-white px-3 py-1.5 rounded-md text-sm hover:bg-red-600 transition">
+
+                                            Eliminar
+
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        @endforeach
+
+                    </tbody>
+
+                </table>
+
+                <div class="mt-6 flex justify-center">
+                    <nav class="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border">
+
+                        @foreach ($horarios->getUrlRange(1, $horarios->lastPage()) as $page => $url)
+                            @if ($page == $horarios->currentPage())
+                                <span class="px-3 py-1 rounded-lg bg-blue-600 text-white text-sm">
+                                    {{ $page }}
+                                </span>
+                            @else
+                                <a href="{{ $url }}"
+                                    class="px-3 py-1 rounded-lg text-gray-600 hover:bg-gray-100 text-sm">
+                                    {{ $page }}
+                                </a>
+                            @endif
+                        @endforeach
+
+                    </nav>
+                </div>
+
+            </div>
 
         </div>
 
