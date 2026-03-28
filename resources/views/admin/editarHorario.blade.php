@@ -1,36 +1,54 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-3xl mx-auto">
 
-    <h1 class="text-3xl font-bold mb-6">
-        Editar Horario
-    </h1>
+<div class="max-w-3xl mx-auto space-y-8">
 
-    <div class="bg-white p-6 rounded shadow">
+    <!-- TITULO -->
+    <div>
 
-        <form action="{{ route('admin.horarios.update', $horario->id) }}" method="POST" class="space-y-6">
+        <h1 class="text-3xl font-bold text-gray-800">
+            Editar Horario
+        </h1>
+
+        <p class="text-gray-500 text-sm mt-1">
+            Modifica la información del horario seleccionado
+        </p>
+
+    </div>
+
+
+    <!-- FORMULARIO -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+
+        <form action="{{ route('admin.horarios.update', $horario->id) }}"
+              method="POST"
+              class="space-y-6">
 
             @csrf
             @method('PUT')
 
-            <!-- MATERIA -->
 
+            <!-- MATERIA -->
             <div>
 
-                <label class="block text-sm font-semibold mb-1">
+                <label class="block text-sm font-medium text-gray-600 mb-1">
                     Materia
                 </label>
 
-                <select name="materia_id" required class="border p-2 rounded w-full">
+                <select name="materia_id"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
                     @foreach ($materias as $materia)
-                        <option value="{{ $materia->id }}"
-                            {{ $horario->materia_id == $materia->id ? 'selected' : '' }}>
 
-                            {{ $materia->nombre }}
+                    <option value="{{ $materia->id }}"
+                        {{ $horario->materia_id == $materia->id ? 'selected' : '' }}>
 
-                        </option>
+                        {{ $materia->nombre }}
+
+                    </option>
+
                     @endforeach
 
                 </select>
@@ -39,22 +57,25 @@
 
 
             <!-- MAESTRO -->
-
             <div>
 
-                <label class="block text-sm font-semibold mb-1">
-                    Maestro
+                <label class="block text-sm font-medium text-gray-600 mb-1">
+                    Profesor
                 </label>
 
-                <select name="maestro_id" required class="border p-2 rounded w-full">
+                <select name="maestro_id"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
                     @foreach ($maestros as $maestro)
-                        <option value="{{ $maestro->id }}"
-                            {{ $horario->maestro_id == $maestro->id ? 'selected' : '' }}>
 
-                            {{ $maestro->nombre }}
+                    <option value="{{ $maestro->id }}"
+                        {{ $horario->maestro_id == $maestro->id ? 'selected' : '' }}>
 
-                        </option>
+                        {{ $maestro->nombre }}
+
+                    </option>
+
                     @endforeach
 
                 </select>
@@ -63,34 +84,37 @@
 
 
             <!-- DIAS -->
-
             <div>
 
-                <label class="block text-sm font-semibold mb-2">
+                <label class="block text-sm font-medium text-gray-600 mb-2">
                     Días de la semana
                 </label>
 
-                <div class="grid grid-cols-3 gap-3">
+                @php
+                    $diasSemana = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+                    $diasSeleccionados = explode(',', $horario->dia);
+                @endphp
 
-                    @php
-                        $diasSemana = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-                        $diasSeleccionados = explode(',', $horario->dia);
-                    @endphp
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
 
                     @foreach ($diasSemana as $dia)
 
-                        <label class="flex items-center gap-2 border rounded p-2 hover:bg-gray-100 cursor-pointer">
+                    <label class="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2
+                                   hover:bg-gray-50 cursor-pointer">
 
-                            <input
-                                type="checkbox"
-                                name="dias[]"
-                                value="{{ $dia }}"
-                                {{ in_array($dia, $diasSeleccionados) ? 'checked' : '' }}
-                            >
+                        <input
+                            type="checkbox"
+                            name="dias[]"
+                            value="{{ $dia }}"
+                            class="accent-blue-600"
+                            {{ in_array($dia, $diasSeleccionados) ? 'checked' : '' }}
+                        >
 
+                        <span class="text-sm text-gray-700">
                             {{ $dia }}
+                        </span>
 
-                        </label>
+                    </label>
 
                     @endforeach
 
@@ -100,13 +124,12 @@
 
 
             <!-- HORAS -->
-
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid md:grid-cols-2 gap-6">
 
                 <div>
 
-                    <label class="block text-sm font-semibold mb-1">
-                        Hora inicio
+                    <label class="block text-sm font-medium text-gray-600 mb-1">
+                        Hora de inicio
                     </label>
 
                     <input
@@ -114,16 +137,16 @@
                         name="hora_inicio"
                         value="{{ $horario->hora_inicio }}"
                         required
-                        class="border p-2 rounded w-full"
-                    >
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
                 </div>
 
 
                 <div>
 
-                    <label class="block text-sm font-semibold mb-1">
-                        Hora fin
+                    <label class="block text-sm font-medium text-gray-600 mb-1">
+                        Hora de fin
                     </label>
 
                     <input
@@ -131,8 +154,8 @@
                         name="hora_fin"
                         value="{{ $horario->hora_fin }}"
                         required
-                        class="border p-2 rounded w-full"
-                    >
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2
+                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
                 </div>
 
@@ -140,11 +163,11 @@
 
 
             <!-- BOTONES -->
-
-            <div class="flex justify-end gap-3">
+            <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
 
                 <a href="{{ route('admin.horarios') }}"
-                    class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                   class="px-4 py-2 rounded-lg text-sm font-medium
+                   bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
 
                     Cancelar
 
@@ -152,7 +175,8 @@
 
                 <button
                     type="submit"
-                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    class="px-4 py-2 rounded-lg text-sm font-medium
+                    bg-blue-600 text-white hover:bg-blue-700 transition">
 
                     Guardar cambios
 
@@ -165,4 +189,5 @@
     </div>
 
 </div>
+
 @endsection

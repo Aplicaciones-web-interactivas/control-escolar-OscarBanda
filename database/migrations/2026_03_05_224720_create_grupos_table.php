@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('grupos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('horario_id')->constrained();
+            $table->foreignId('horario_id')->constrained()->cascadeOnDelete();
             $table->string('nombre');
             $table->timestamps();
         });

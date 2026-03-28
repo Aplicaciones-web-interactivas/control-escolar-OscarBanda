@@ -3,45 +3,109 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Iniciar sesión</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100 flex items-center justify-center h-screen">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-    <div class="w-80">
+    <div class="w-full max-w-sm space-y-4">
+
+        <!-- MENSAJES -->
 
         @if (session('success'))
-            <div class="bg-green-500 text-white p-3 mb-3 rounded text-center">
-                {{ session('success') }}
-            </div>
+        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm text-center">
+            {{ session('success') }}
+        </div>
         @endif
 
         @if (session('error'))
-            <div class="bg-red-500 text-white p-3 mb-3 rounded text-center">
-                {{ session('error') }}
-            </div>
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm text-center">
+            {{ session('error') }}
+        </div>
         @endif
 
-        <form method="POST" action="/login" class="bg-white p-6 rounded shadow">
+
+        <!-- FORMULARIO -->
+
+        <form method="POST" action="/login"
+            class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-5">
 
             @csrf
 
-            <h2 class="text-xl mb-4 text-center">Iniciar sesión</h2>
+            <div class="text-center">
 
-            <input type="text" name="clave_institucional" placeholder="Clave institucional"
-                class="w-full border p-2 mb-3" required>
+                <h2 class="text-2xl font-bold text-gray-800">
+                    Iniciar sesión
+                </h2>
 
-            <input type="password" name="password" placeholder="Contraseña" class="w-full border p-2 mb-3" required>
+                <p class="text-sm text-gray-500 mt-1">
+                    Accede con tu cuenta institucional
+                </p>
 
-            <button class="bg-blue-500 text-white w-full p-2 rounded">
+            </div>
+
+
+            <!-- CLAVE -->
+
+            <div>
+
+                <label class="block text-sm font-medium text-gray-600 mb-1">
+                    Clave institucional
+                </label>
+
+                <input
+                    type="text"
+                    name="clave_institucional"
+                    required
+                    placeholder="Ej. A12345"
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2
+                    focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+
+            </div>
+
+
+            <!-- PASSWORD -->
+
+            <div>
+
+                <label class="block text-sm font-medium text-gray-600 mb-1">
+                    Contraseña
+                </label>
+
+                <input
+                    type="password"
+                    name="password"
+                    required
+                    placeholder="••••••••"
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2
+                    focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+
+            </div>
+
+
+            <!-- BOTON -->
+
+            <button
+                class="w-full bg-blue-600 text-white py-2 rounded-lg
+                hover:bg-blue-700 transition font-medium">
+
                 Entrar
+
             </button>
 
-            <div class="text-center mt-4">
-                <a href="/register" class="text-blue-500 hover:underline text-sm">
+
+            <!-- REGISTER -->
+
+            <div class="text-center pt-2">
+
+                <a href="/register"
+                    class="text-sm text-blue-600 hover:underline">
+
                     ¿No tienes cuenta? Registrarse
+
                 </a>
+
             </div>
 
         </form>

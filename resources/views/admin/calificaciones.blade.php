@@ -1,24 +1,43 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="max-w-6xl mx-auto">
 
-        <h1 class="text-3xl font-bold mb-6">
-            Calificaciones
-        </h1>
+    <div class="space-y-8">
+
+        <!-- TITULO -->
+
+        <div>
+
+            <h1 class="text-3xl font-bold text-gray-800">
+                Calificaciones
+            </h1>
+
+            <p class="text-gray-500 text-sm mt-1">
+                Asigna o actualiza las calificaciones de los alumnos por grupo
+            </p>
+
+        </div>
+
 
         <!-- SELECCIONAR GRUPO -->
 
-        <div class="bg-white p-6 rounded shadow mb-8">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
 
-            <form method="GET" class="flex gap-4 items-end">
+            <h2 class="text-lg font-semibold text-gray-700 mb-6">
+                Seleccionar grupo
+            </h2>
+
+            <form method="GET" class="flex flex-wrap gap-4 items-end">
 
                 <div>
-                    <label class="block text-sm font-semibold mb-1">
+
+                    <label class="block text-sm font-medium text-gray-600 mb-1">
                         Grupo
                     </label>
 
-                    <select name="grupo_id" class="border p-2 rounded">
+                    <select name="grupo_id"
+                        class="border border-gray-300 rounded-lg px-3 py-2
+                    focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
 
                         @foreach ($grupos as $grupo)
                             <option value="{{ $grupo->id }}" {{ request('grupo_id') == $grupo->id ? 'selected' : '' }}>
@@ -32,8 +51,11 @@
 
                 </div>
 
-                <button class="bg-blue-600 text-white px-4 py-2 rounded">
+                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg
+                hover:bg-blue-700 transition">
+
                     Mostrar alumnos
+
                 </button>
 
             </form>
@@ -41,64 +63,111 @@
         </div>
 
 
+
         <!-- TABLA DE ALUMNOS -->
 
         @if (isset($inscripciones))
-            <div class="bg-white rounded shadow overflow-hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
 
-                <table class="w-full">
+                <div class="px-6 py-4 border-b border-gray-200">
 
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="p-3">Alumno</th>
-                            <th class="p-3">Calificación</th>
-                            <th class="p-3">Acción</th>
-                        </tr>
-                    </thead>
+                    <h2 class="text-lg font-semibold text-gray-700">
+                        Lista de alumnos
+                    </h2>
 
-                    <tbody>
+                </div>
 
-                        @foreach ($inscripciones as $inscripcion)
-                            <tr class="border-t">
+                <div class="overflow-x-auto">
 
-                                <form action="{{ route('admin.calificaciones.save') }}" method="POST">
-                                    @csrf
+                    <table class="w-full text-sm">
 
-                                    <input type="hidden" name="user_id" value="{{ $inscripcion->user->id }}">
-                                    <input type="hidden" name="grupo_id" value="{{ $inscripcion->grupo->id }}">
+                        <thead class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider">
 
-                                    <td class="p-3">
-                                        {{ $inscripcion->user->nombre }}
-                                    </td>
+                            <tr>
 
-                                    <td class="p-3">
+                                <th class="px-6 py-3 text-left">
+                                    Alumno
+                                </th>
 
-                                        <input type="number" name="calificacion" step="0.1" min="1"
-                                            max="10"
-                                            value="{{ $calificaciones[$inscripcion->user->id]->calificacion ?? '' }}"
-                                            class="border p-1 rounded w-24">
+                                <th class="px-6 py-3 text-left">
+                                    Calificación
+                                </th>
 
-                                    </td>
-
-                                    <td class="p-3">
-
-                                        <button class="bg-green-600 text-white px-3 py-1 rounded">
-                                            Guardar
-                                        </button>
-
-                                    </td>
-
-                                </form>
+                                <th class="px-6 py-3 text-center">
+                                    Acción
+                                </th>
 
                             </tr>
-                        @endforeach
 
-                    </tbody>
+                        </thead>
 
-                </table>
+                        <tbody class="divide-y divide-gray-200">
+
+                            @foreach ($inscripciones as $inscripcion)
+                                <tr class="hover:bg-gray-50 transition">
+
+                                    <form action="{{ route('admin.calificaciones.save') }}" method="POST">
+
+                                        @csrf
+
+                                        <input type="hidden" name="user_id" value="{{ $inscripcion->user->id }}">
+                                        <input type="hidden" name="grupo_id" value="{{ $inscripcion->grupo->id }}">
+
+                                        <!-- ALUMNO -->
+
+                                        <td class="px-6 py-4 font-medium text-gray-800">
+
+                                            {{ $inscripcion->user->nombre }}
+
+                                        </td>
+
+
+                                        <!-- CALIFICACION -->
+
+                                        <td class="px-6 py-4">
+
+                                            <input type="number" name="calificacion" step="0.1" min="1"
+                                                max="10"
+                                                value="{{ $calificaciones[$inscripcion->user->id]->calificacion ?? '' }}"
+                                                class="w-24 border border-gray-300 rounded-lg px-2 py-1
+                                    focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+
+                                        </td>
+
+
+                                        <!-- BOTON -->
+
+                                        <td class="px-6 py-4">
+
+                                            <div class="flex justify-center">
+
+                                                <button
+                                                    class="bg-green-600 text-white px-3 py-1.5 rounded-md text-sm hover:bg-green-700">
+
+                                                    Guardar
+
+                                                </button>
+
+                                            </div>
+
+                                        </td>
+
+                                    </form>
+
+                                </tr>
+                            @endforeach
+
+                        </tbody>
+
+                    </table>
+
+                    
+
+                </div>
 
             </div>
         @endif
 
     </div>
+
 @endsection

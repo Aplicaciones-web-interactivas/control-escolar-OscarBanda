@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('calificaciones', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('grupo_id')->constrained();
-            $table->foreignId('user_id')->constrained();
-            $table->float('calificacion');
+            $table->foreignId('grupo_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->float('calificacion', 10, 2);
             $table->timestamps();
         });
     }
