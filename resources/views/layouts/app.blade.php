@@ -27,34 +27,70 @@
             <!-- MENU -->
             <nav class="p-4 space-y-2">
 
-                <a href="/dashboard" class="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 font-medium">
+                <a href="/dashboard" class="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
                     Inicio
                 </a>
 
-                <a href="{{ route('admin.materias') }}"
-                    class="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
-                    Materias
-                </a>
+                <!-- ADMIN -->
+                @if (Auth::user()->role == 'Administrador')
 
-                <a href="{{ route('admin.horarios') }}"
-                    class="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
-                    Horarios
-                </a>
+                    <a href="{{ route('admin.materias') }}"
+                        class="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
+                        Materias
+                    </a>
 
-                <a href="{{ route('admin.grupos') }}"
-                    class="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
-                    Grupos
-                </a>
+                    <a href="{{ route('admin.horarios') }}"
+                        class="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
+                        Horarios
+                    </a>
 
-                <a href="{{ route('admin.inscripciones') }}"
-                    class="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
-                    Inscripciones
-                </a>
+                    <a href="{{ route('admin.grupos') }}"
+                        class="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
+                        Grupos
+                    </a>
 
-                <a href="{{ route('admin.calificaciones') }}"
-                    class="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
-                    Calificaciones
-                </a>
+                @endif
+
+
+                <!-- PROFESOR -->
+                @if (Auth::user()->role == 'Profesor')
+
+                    <a href="{{ route('admin.grupos') }}"
+                        class="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
+                        Grupos
+                    </a>
+
+                @endif
+
+
+                <!-- INSCRIPCIONES -->
+
+                    <a href="{{ route('admin.inscripciones') }}"
+                        class="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
+                        Inscripciones
+                    </a>
+
+
+                <!-- CALIFICACIONES -->
+                @if (Auth::user()->role == 'Administrador' || Auth::user()->role == 'Profesor' || Auth::user()->role == 'Estudiante')
+
+                    <a href="{{ route('admin.calificaciones') }}"
+                        class="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
+                        Calificaciones
+                    </a>
+
+                @endif
+
+
+                <!-- TAREAS -->
+                @if (Auth::user()->role == 'Profesor' || Auth::user()->role == 'Estudiante')
+
+                    <a href="{{ route('tareas') }}"
+                        class="block px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
+                        Tareas
+                    </a>
+
+                @endif
 
             </nav>
 
@@ -70,7 +106,7 @@
                 <div class="flex justify-between items-center px-8 py-4">
 
                     <h2 class="text-lg font-semibold text-gray-700">
-                        Panel Administrativo
+                        Panel
                     </h2>
 
                     <!-- USER -->
@@ -128,9 +164,7 @@
             <div class="flex justify-end gap-3">
 
                 <button onclick="cerrarModalEliminar()" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
-
                     Cancelar
-
                 </button>
 
                 <form id="formEliminarGlobal" method="POST">
@@ -139,9 +173,7 @@
                     @method('DELETE')
 
                     <button class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
-
                         Eliminar
-
                     </button>
 
                 </form>

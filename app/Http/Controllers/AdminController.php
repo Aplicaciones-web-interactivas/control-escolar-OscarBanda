@@ -10,6 +10,8 @@ use App\Models\Grupo;
 use App\Models\Inscripcion;
 use App\Models\Calificacion;
 
+use Illuminate\Support\Facades\Auth;
+
 class AdminController extends Controller
 {
 
@@ -138,10 +140,30 @@ class AdminController extends Controller
 
     public function indexGrupos()
     {
-        $grupos = Grupo::with('horario.materia', 'horario.maestro')->paginate(10);
-        $horarios = Horario::with('materia', 'maestro')->get();
+        $user = Auth::user();
 
-        return view('admin.grupos', compact('grupos', 'horarios'));
+        // ADMINISTRADOR
+        if ($user->role == 'Administrador') {
+
+            $grupos = Grupo::with('horario.materia', 'horario.maestro')->paginate(10);
+            $horarios = Horario::with('materia', 'maestro')->get();
+
+            return view('admin.grupos', compact('grupos', 'horarios'));
+        }
+
+        // PROFESOR (solo sus grupos)
+        if ($user->role == 'Profesor') {
+
+            $grupos = Grupo::with('horario.materia', 'horario.maestro')
+                ->whereHas('horario', function ($q) use ($user) {
+                    $q->where('maestro_id', $user->id);
+                })
+                ->paginate(10);
+
+            $horarios = [];
+
+            return view('admin.grupos', compact('grupos', 'horarios'));
+        }
     }
 
     public function saveGrupo(Request $request)
@@ -193,11 +215,45 @@ class AdminController extends Controller
 
     public function indexInscripciones()
     {
-        $inscripciones = Inscripcion::with(['user', 'grupo'])->paginate(10);
-        $usuarios = User::where('role', 'Estudiante')->get();
-        $grupos = Grupo::all();
+        $user = Auth::user();
 
-        return view('admin.inscripciones', compact('inscripciones', 'usuarios', 'grupos'));
+        // ADMINISTRADOR
+        if ($user->role == 'Administrador') {
+
+            $inscripciones = Inscripcion::with(['user', 'grupo'])->paginate(10);
+            $usuarios = User::where('role', 'Estudiante')->get();
+            $grupos = Grupo::all();
+
+            return view('admin.inscripciones', compact('inscripciones', 'usuarios', 'grupos'));
+        }
+
+        // PROFESOR (solo sus grupos)
+        if ($user->role == 'Profesor') {
+
+            $grupos = Grupo::whereHas('horario', function ($q) use ($user) {
+                $q->where('maestro_id', $user->id);
+            })->get();
+
+            $grupoIds = $grupos->pluck('id');
+
+            $inscripciones = Inscripcion::with(['user', 'grupo'])
+                ->whereIn('grupo_id', $grupoIds)
+                ->paginate(10);
+
+            $usuarios = User::where('role', 'Estudiante')->get();
+
+            return view('admin.inscripciones', compact('inscripciones', 'usuarios', 'grupos'));
+        }
+
+        // ESTUDIANTE (solo sus materias)
+        if ($user->role == 'Estudiante') {
+
+            $inscripciones = Inscripcion::with(['user', 'grupo.horario.materia'])
+                ->where('user_id', $user->id)
+                ->paginate(10);
+
+            return view('admin.inscripciones', compact('inscripciones'));
+        }
     }
 
     public function saveInscripcion(Request $request)
@@ -247,22 +303,67 @@ class AdminController extends Controller
 
     public function indexCalificaciones(Request $request)
     {
-        $grupos = Grupo::all();
+        $user = Auth::user();
 
-        if ($request->grupo_id) {
+        // ADMINISTRADOR
+        if ($user->role == 'Administrador') {
 
-            $inscripciones = Inscripcion::with('user','grupo')
-                ->where('grupo_id', $request->grupo_id)
-                ->paginate(10);
+            $grupos = Grupo::all();
 
-            $calificaciones = Calificacion::where('grupo_id', $request->grupo_id)
-                ->get()
-                ->keyBy('user_id');
+            if ($request->grupo_id) {
 
-            return view('admin.calificaciones', compact('grupos','inscripciones','calificaciones'));
+                $inscripciones = Inscripcion::with('user', 'grupo')
+                    ->where('grupo_id', $request->grupo_id)
+                    ->paginate(10);
+
+                $calificaciones = Calificacion::where('grupo_id', $request->grupo_id)
+                    ->get()
+                    ->keyBy('user_id');
+
+                return view('admin.calificaciones', compact('grupos', 'inscripciones', 'calificaciones'));
+            }
+
+            return view('admin.calificaciones', compact('grupos'));
         }
 
-        return view('admin.calificaciones', compact('grupos'));
+
+        // PROFESOR
+        if ($user->role == 'Profesor') {
+
+            $grupos = Grupo::whereHas('horario', function ($q) use ($user) {
+                $q->where('maestro_id', $user->id);
+            })->get();
+
+            if ($request->grupo_id) {
+
+                $inscripciones = Inscripcion::with('user', 'grupo')
+                    ->where('grupo_id', $request->grupo_id)
+                    ->paginate(10);
+
+                $calificaciones = Calificacion::where('grupo_id', $request->grupo_id)
+                    ->get()
+                    ->keyBy('user_id');
+
+                return view('admin.calificaciones', compact('grupos', 'inscripciones', 'calificaciones'));
+            }
+
+            return view('admin.calificaciones', compact('grupos'));
+        }
+
+
+        // ESTUDIANTE
+        if ($user->role == 'Estudiante') {
+
+            $inscripciones = Inscripcion::with('grupo.horario.materia')
+                ->where('user_id', $user->id)
+                ->get();
+
+            $calificaciones = Calificacion::where('user_id', $user->id)
+                ->get()
+                ->keyBy('grupo_id');
+
+            return view('estudiante.calificaciones_estudiante', compact('inscripciones', 'calificaciones'));
+        }
     }
 
     public function saveCalificacion(Request $request)

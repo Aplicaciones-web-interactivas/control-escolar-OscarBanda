@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\TareaController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -18,54 +19,47 @@ Route::get('/register', [AuthController::class, 'showRegister']);
 
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::get('/dashboard', [AuthController::class, 'dashboard'])->middleware('auth');
+Route::middleware(['auth'])->group(function () {
 
-Route::get('/materias', [AdminController::class, 'indexMaterias'])->name('admin.materias');
+    Route::get('/dashboard', [AuthController::class, 'dashboard']);
 
-Route::post('/materias', [AdminController::class, 'saveMateria'])->name('admin.materias.save');
+    Route::get('/materias', [AdminController::class, 'indexMaterias'])->name('admin.materias');
+    Route::post('/materias', [AdminController::class, 'saveMateria'])->name('admin.materias.save');
+    Route::delete('/materias/{id}', [AdminController::class, 'deleteMateria'])->name('admin.materias.delete');
+    Route::get('/materias/{id}/edit', [AdminController::class, 'editMateria'])->name('admin.materias.edit');
+    Route::put('/materias/{id}', [AdminController::class, 'updateMateria'])->name('admin.materias.update');
 
-Route::delete('/materias/{id}', [AdminController::class, 'deleteMateria'])->name('admin.materias.delete');
+    Route::get('/horarios', [AdminController::class, 'indexHorarios'])->name('admin.horarios');
+    Route::post('/horarios', [AdminController::class, 'saveHorario'])->name('admin.horarios.save');
+    Route::put('/horarios/{id}', [AdminController::class, 'updateHorario'])->name('admin.horarios.update');
+    Route::delete('/horarios/{id}', [AdminController::class, 'deleteHorario'])->name('admin.horarios.delete');
+    Route::get('/horarios/{id}/edit', [AdminController::class, 'editHorario'])->name('admin.horarios.edit');
 
-Route::get('/materias/{id}/edit', [AdminController::class, 'editMateria'])->name('admin.materias.edit');
+    Route::get('/grupos', [AdminController::class, 'indexGrupos'])->name('admin.grupos');
+    Route::post('/grupos', [AdminController::class, 'saveGrupo'])->name('admin.grupos.save');
+    Route::get('/grupos/{id}/edit', [AdminController::class, 'editGrupo'])->name('admin.grupos.edit');
+    Route::put('/grupos/{id}', [AdminController::class, 'updateGrupo'])->name('admin.grupos.update');
+    Route::delete('/grupos/{id}', [AdminController::class, 'deleteGrupo'])->name('admin.grupos.delete');
 
-Route::put('/materias/{id}', [AdminController::class, 'updateMateria'])->name('admin.materias.update');
+    Route::get('/inscripciones', [AdminController::class, 'indexInscripciones'])->name('admin.inscripciones');
+    Route::post('/inscripciones', [AdminController::class, 'saveInscripcion'])->name('admin.inscripciones.save');
+    Route::delete('/inscripciones/{id}', [AdminController::class, 'deleteInscripcion'])->name('admin.inscripciones.delete');
+    Route::get('/inscripciones/{id}/edit', [AdminController::class, 'editInscripcion'])->name('admin.inscripciones.edit');
+    Route::put('/inscripciones/{id}', [AdminController::class, 'updateInscripcion'])->name('admin.inscripciones.update');
 
-Route::get('/horarios', [AdminController::class, 'indexHorarios'])->name('admin.horarios');
+    Route::get('/calificaciones', [AdminController::class, 'indexCalificaciones'])->name('admin.calificaciones');
+    Route::post('/calificaciones', [AdminController::class, 'saveCalificacion'])->name('admin.calificaciones.save');
+    Route::put('/calificaciones/{id}', [AdminController::class, 'updateCalificacion'])->name('admin.calificaciones.update');
+    Route::delete('/calificaciones/{id}', [AdminController::class, 'deleteCalificacion'])->name('admin.calificaciones.delete');
+});
 
-Route::post('/horarios', [AdminController::class, 'saveHorario'])->name('admin.horarios.save');
+Route::middleware(['auth'])->group(function () {
 
-Route::put('/horarios/{id}', [AdminController::class, 'updateHorario'])->name('admin.horarios.update');
+    Route::get('/tareas', [TareaController::class, 'index'])->name('tareas');
 
-Route::delete('/horarios/{id}', [AdminController::class, 'deleteHorario'])->name('admin.horarios.delete');
+    Route::post('/tareas', [TareaController::class, 'saveTarea'])->name('tareas.save');
 
-Route::get('/horarios/{id}/edit', [AdminController::class, 'editHorario'])->name('admin.horarios.edit');
+    Route::post('/tareas/entregar', [TareaController::class, 'entregarTarea'])->name('tareas.entregar');
 
-Route::get('/grupos', [AdminController::class,'indexGrupos'])->name('admin.grupos');
-
-Route::post('/grupos', [AdminController::class,'saveGrupo'])->name('admin.grupos.save');
-
-Route::get('/grupos/{id}/edit', [AdminController::class,'editGrupo'])->name('admin.grupos.edit');
-
-Route::put('/grupos/{id}', [AdminController::class,'updateGrupo'])->name('admin.grupos.update');
-
-Route::delete('/grupos/{id}', [AdminController::class,'deleteGrupo'])->name('admin.grupos.delete');
-
-Route::get('/inscripciones', [AdminController::class, 'indexInscripciones'])->name('admin.inscripciones');
-
-Route::post('/inscripciones', [AdminController::class, 'saveInscripcion'])->name('admin.inscripciones.save');
-
-Route::delete('/inscripciones/{id}', [AdminController::class, 'deleteInscripcion'])->name('admin.inscripciones.delete');
-
-Route::get('/inscripciones/{id}/edit', [AdminController::class,'editInscripcion'])->name('admin.inscripciones.edit');
-
-Route::put('/inscripciones/{id}', [AdminController::class,'updateInscripcion'])->name('admin.inscripciones.update');
-
-Route::get('/calificaciones', [AdminController::class,'indexCalificaciones'])
-->name('admin.calificaciones');
-
-Route::post('/calificaciones', [AdminController::class,'saveCalificacion'])
-->name('admin.calificaciones.save');
-
-Route::put('/calificaciones/{id}', [AdminController::class, 'updateCalificacion'])->name('admin.calificaciones.update');
-
-Route::delete('/calificaciones/{id}', [AdminController::class, 'deleteCalificacion'])->name('admin.calificaciones.delete');
+    Route::get('/tareas/{id}/entregas', [TareaController::class, 'verEntregas'])->name('tareas.entregas');
+});
